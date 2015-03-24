@@ -11,13 +11,11 @@ eulimit = 500
 # Page - структура, содежащая  информацию о странице
 class Page :
     name = ''
-    url = ''
-    id = 0
     extLinksCount = 0
 
 # parseExtUrlResponse - парсинг списка внешних ссылок и добавление в словарь.
 # Возвращает новый euoffset или -1, если это конец
-def parseExtUrlResponse(file, idToCount) :
+def parseExtUrlResponse(file, idToCount, idToName) :
     try:
         xml = etree.parse(file)
     except lxml.etree.XMLSyntaxError as error :
@@ -40,6 +38,8 @@ def parseExtUrlResponse(file, idToCount) :
     for item in xmlExtUrls :
         try :
             pageId = int(item.get('pageid'))
+            if pageId not in idToName :
+                idToName[pageId] = item.get('title')
         except ValueError :
             print('Ошибка: полученный XML имеет неверный формат', file = sys.stderr)
             exit(1)
@@ -53,11 +53,11 @@ def parseExtUrlResponse(file, idToCount) :
 
 # createList - создаёт список статей на основе количества ссылок,
 # сортирует по убыванию и оставляет pagesCount элементов
-def createList(idToCount, pagesCount) :
+def createList(idToCount, idToName, pagesCount) :
     pages = []
     for i in idToCount :
         page = Page()
-        page.id = i
+        page.name = idToName[i]
         page.extLinksCount = idToCount[i]
         pages.append(page)
     pages.sort(key = (lambda x : -x.extLinksCount))
@@ -67,36 +67,45 @@ def createList(idToCount, pagesCount) :
 
 # getPagesWithExtLinks - функция, возвращающая список страниц
 # с указанием количества внешних ссылок.
-def getPagesWithExtLinks(site, pagesCount) :
-    print('Получение информации с', site, file = sys.stderr)
+def getPagesWithExtLinks(config) :
+    print('Получение информации с', config.siteName, file = sys.stderr)
 
     # Количество ссылок в статьях
     idToCount = {}
+    # Имена снатей
+    idToName = {}
 
     # URL запроса
-    apiUrl = site + '/w/api.php'
+    apiUrl = config.siteName + '/w/api.php'
     extUrlRequestUrl = apiUrl + '?'
     extUrlRequestUrl += 'action=query&'
     extUrlRequestUrl += 'list=exturlusage&'
     extUrlRequestUrl += 'format=xml&'
+    extUrlRequestUrl += 'eunamespace=0&'
     extUrlRequestUrl += 'eulimit=' + str(eulimit) + '&'
     extUrlRequestUrl += 'euoffset='
     euoffset = 0
-    while euoffset != -1 :
+    outputPeriodLeft = config.listParsingOutputPeriod
+    while True :
         # Запрос к MediaWiki API на получение данных
         try :
             response = urllib.request.urlopen(extUrlRequestUrl + str(euoffset))
         except (urllib.error.URLError, ValueError) :
-            print('Ошибка: не удалось соединиться с', site, file = sys.stderr)
+            print('Ошибка: не удалось соединиться с', config.siteName, file = sys.stderr)
             exit(1)
 
         # Парсинг xml и получение данных
-        euoffset = parseExtUrlResponse(response, idToCount)
+        euoffset = parseExtUrlResponse(response, idToCount, idToName)
+        if euoffset == -1 :
+            break
+
+        outputPeriodLeft -= eulimit
+        if outputPeriodLeft <= 0 :
+            outputPeriodLeft = config.listParsingOutputPeriod
+            print('Обработано', euoffset, 'ссылок...', file = sys.stderr)
 
     # Создание массива и сортировка
     print('Сортировка страниц по убыванию количества ссылок', file = sys.stderr)
-    pages = createList(idToCount, pagesCount)
-    for i in pages :
-        print(i.id, i.extLinksCount, file = sys.stderr)
+    pages = createList(idToCount, idToName, config.pagesCount)
 
-    # Получение информации о страницах (название, адрес)
+    return pages

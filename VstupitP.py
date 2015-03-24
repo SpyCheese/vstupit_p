@@ -14,4 +14,6 @@ print('Парсинг файла', configFileName, file = sys.stderr)
 config = ConfigParser.parse(configFileName)
 
 # Получение списка статей с внешними ссылками с помощью MetaWiki API
-pages = WikiGetter.getPagesWithExtLinks(config.siteName, config.pagesCount)
+pages = WikiGetter.getPagesWithExtLinks(config)
+for i in pages :
+    print(i.name, i.extLinksCount, file = sys.stderr)

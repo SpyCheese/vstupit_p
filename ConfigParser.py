@@ -10,6 +10,7 @@ class Config :
     siteName = ''
     outputFile = ''
     pagesCounr = 0
+    listParsingOutputPeriod = 0
 
 # getParam - возвращает значение параметра из файла концигурации.
 # Завершает программу с ошибкой при его отсутствии.
@@ -33,6 +34,13 @@ def parse(fileName) :
             raise ValueError()
     except ValueError :
         print('Ошибка: некорректное значение pagesCount', file = sys.stderr)
+        exit(1)
+    try :
+        c.listParsingOutputPeriod = int(getParam(configFile, 'listParsingOutputPeriod'))
+        if c.pagesCount <= 0 :
+            raise ValueError()
+    except ValueError :
+        print('Ошибка: некорректное значение listParsingOutputPeriod', file = sys.stderr)
         exit(1)
 
     return c
