@@ -9,6 +9,7 @@ import sys
 class Config :
     siteName = ''
     outputFile = ''
+    pagesCounr = 0
 
 # getParam - возвращает значение параметра из файла концигурации.
 # Завершает программу с ошибкой при его отсутствии.
@@ -26,5 +27,12 @@ def parse(fileName) :
 
     c.siteName = getParam(configFile, 'siteName')
     c.outputFile = getParam(configFile, 'outputFile')
+    try :
+        c.pagesCount = int(getParam(configFile, 'pagesCount'))
+        if c.pagesCount <= 0 :
+            raise ValueError()
+    except ValueError :
+        print('Ошибка: некорректное значение pagesCount', file = sys.stderr)
+        exit(1)
 
     return c
