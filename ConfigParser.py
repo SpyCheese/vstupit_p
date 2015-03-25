@@ -7,9 +7,10 @@ import sys
 
 # Config - структура, возвращаемая из функции parse
 class Config :
-    siteName = ''
+    siteUrl = ''
     outputFile = ''
-    pagesCounr = 0
+    pageTitle = ''
+    pagesCount = 0
     listParsingOutputPeriod = 0
 
 # getParam - возвращает значение параметра из файла концигурации.
@@ -22,12 +23,14 @@ def getParam(configFile, param) :
 
 # parse - открывает файл fileName и считывает из него параметры.
 def parse(fileName) :
+    print('Парсинг файла', fileName, file = sys.stderr)
     configFile = configparser.ConfigParser()
     configFile.read(fileName)
     c = Config()
 
-    c.siteName = getParam(configFile, 'siteName')
+    c.siteUrl = getParam(configFile, 'siteUrl')
     c.outputFile = getParam(configFile, 'outputFile')
+    c.pageTitle = getParam(configFile, 'pageTitle')
     try :
         c.pagesCount = int(getParam(configFile, 'pagesCount'))
         if c.pagesCount <= 0 :

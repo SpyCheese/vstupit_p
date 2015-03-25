@@ -68,7 +68,7 @@ def createList(idToCount, idToName, pagesCount) :
 # getPagesWithExtLinks - функция, возвращающая список страниц
 # с указанием количества внешних ссылок.
 def getPagesWithExtLinks(config) :
-    print('Получение информации с', config.siteName, file = sys.stderr)
+    print('Получение информации с', config.siteUrl, file = sys.stderr)
 
     # Количество ссылок в статьях
     idToCount = {}
@@ -76,22 +76,22 @@ def getPagesWithExtLinks(config) :
     idToName = {}
 
     # URL запроса
-    apiUrl = config.siteName + '/w/api.php'
+    apiUrl = config.siteUrl + '/w/api.php'
     extUrlRequestUrl = apiUrl + '?'
     extUrlRequestUrl += 'action=query&'
     extUrlRequestUrl += 'list=exturlusage&'
     extUrlRequestUrl += 'format=xml&'
     extUrlRequestUrl += 'eunamespace=0&'
-    extUrlRequestUrl += 'eulimit=' + str(eulimit) + '&'
-    extUrlRequestUrl += 'euoffset='
+    extUrlRequestUrl += 'eulimit={eulimit:d}&'
+    extUrlRequestUrl += 'euoffset={euoffset:d}'
     euoffset = 0
     outputPeriodLeft = config.listParsingOutputPeriod
     while True :
         # Запрос к MediaWiki API на получение данных
         try :
-            response = urllib.request.urlopen(extUrlRequestUrl + str(euoffset))
+            response = urllib.request.urlopen(extUrlRequestUrl.format(eulimit = eulimit, euoffset = euoffset))
         except (urllib.error.URLError, ValueError) :
-            print('Ошибка: не удалось соединиться с', config.siteName, file = sys.stderr)
+            print('Ошибка: не удалось соединиться с', config.siteUrl, file = sys.stderr)
             exit(1)
 
         # Парсинг xml и получение данных
