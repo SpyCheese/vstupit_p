@@ -9,7 +9,6 @@ def createPage(config, pages) :
     print('Создание страницы', config.outputFile, file = sys.stderr)
     htmlPage = open(config.outputFile, 'w')
 
-    htmlPage.write('<title>' + config.pageTitle + '</title>')
     htmlPage.write("""
 <title>{pageTitle}</title>
 <head>
@@ -19,7 +18,7 @@ def createPage(config, pages) :
 <table border="1">
     <tr>
         <td><b>#</b></td>
-        <td><b>Название</b></td>
+        <td><b>Статья</b></td>
         <td><b>Количество<br>ссылок</b></td>
     </tr>
 """.format(pageTitle = config.pageTitle))
@@ -36,7 +35,7 @@ def createPage(config, pages) :
     htmlPage.write("""
 </table>
 </body>
-    """)
+""")
 
     htmlPage.close()
     print('Страница успешно создана', file = sys.stderr)

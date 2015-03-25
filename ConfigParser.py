@@ -11,15 +11,26 @@ class Config :
     outputFile = ''
     pageTitle = ''
     pagesCount = 0
-    listParsingOutputPeriod = 0
 
-# getParam - возвращает значение параметра из файла концигурации.
+# getParamStr - возвращает значение параметра из файла концигурации.
 # Завершает программу с ошибкой при его отсутствии.
-def getParam(configFile, param) :
+def getParamStr(configFile, param) :
     if param not in configFile['DEFAULT'] :
         print('Ошибка: в файле конфигурации отсутствует параметр', param, file = sys.stderr)
         exit(1)
     return configFile['DEFAULT'][param]
+
+# getParamInt - возвращает значение параметра из файла концигурации, преобразованное к числовому типу.
+# Завершает программу с ошибкой при его отсутствии или неверном формате.
+def getParamInt(configFile, param) :
+    try :
+        a = int(getParamStr(configFile, param))
+        if a <= 0 :
+            raise ValueError
+        return a
+    except ValueError :
+        print('Ошибка: некорректное значение', param, file = sys.stderr)
+        exit(1)
 
 # parse - открывает файл fileName и считывает из него параметры.
 def parse(fileName) :
@@ -28,22 +39,9 @@ def parse(fileName) :
     configFile.read(fileName)
     c = Config()
 
-    c.siteUrl = getParam(configFile, 'siteUrl')
-    c.outputFile = getParam(configFile, 'outputFile')
-    c.pageTitle = getParam(configFile, 'pageTitle')
-    try :
-        c.pagesCount = int(getParam(configFile, 'pagesCount'))
-        if c.pagesCount <= 0 :
-            raise ValueError()
-    except ValueError :
-        print('Ошибка: некорректное значение pagesCount', file = sys.stderr)
-        exit(1)
-    try :
-        c.listParsingOutputPeriod = int(getParam(configFile, 'listParsingOutputPeriod'))
-        if c.pagesCount <= 0 :
-            raise ValueError()
-    except ValueError :
-        print('Ошибка: некорректное значение listParsingOutputPeriod', file = sys.stderr)
-        exit(1)
+    c.siteUrl = getParamStr(configFile, 'siteUrl')
+    c.outputFile = getParamStr(configFile, 'outputFile')
+    c.pageTitle = getParamStr(configFile, 'pageTitle')
+    c.pagesCount = getParamInt(configFile, 'pagesCount')
 
     return c
