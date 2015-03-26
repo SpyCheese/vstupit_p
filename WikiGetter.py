@@ -39,7 +39,7 @@ def parseExtUrlResponse(file, idToCount, idToName) :
     for item in xmlExtUrls :
         try :
             pageId = int(item.get('pageid'))
-            # Добавление имени стстьи в словарь имён
+            # Добавление имени статьи в словарь имён
             if pageId not in idToName :
                 idToName[pageId] = item.get('title')
         except ValueError :
@@ -99,7 +99,7 @@ def getPagesWithExtLinks(config) :
             try :
                 response = urllib.request.urlopen(extUrlRequestUrl.format(eulimit = EULIMIT, euoffset = euoffset))
             except (urllib.error.URLError, ValueError) :
-                print('Ошибка: не удалось соединиться с', config.siteUrl, file = sys.stderr)
+                print('Ошибка: не удалось получить доступ к', apiUrl, file = sys.stderr)
                 exit(1)
 
             # Парсинг xml и получение данных

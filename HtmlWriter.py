@@ -7,7 +7,17 @@ import sys
 # createPage - функция, создающая страницу с таблицей статей.
 def createPage(config, pages) :
     print('Создание страницы', config.outputFile, file = sys.stderr)
-    htmlPage = open(config.outputFile, 'w')
+    try :
+        htmlPage = open(config.outputFile, 'w')
+    except PermissionError :
+        print('Ошибка: не удалось создать файл', config.outputFile, '- отказано в доступе', file = sys.stderr)
+        exit(1)
+    except FileNotFoundError :
+        print('Ошибка: не удалось создать файл', config.outputFile, file = sys.stderr)
+        exit(1)
+    except IsADirectoryError :
+        print('Ошибка: не удалось создать файл', config.outputFile, '- это директория', file = sys.stderr)
+        exit(1)
 
     htmlPage.write("""
 <title>{pageTitle}</title>
