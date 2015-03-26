@@ -87,6 +87,7 @@ def getPagesWithExtLinks(config) :
     extUrlRequestUrl += 'list=exturlusage&'
     extUrlRequestUrl += 'format=xml&'
     extUrlRequestUrl += 'eunamespace=0&'
+    extUrlRequestUrl += 'rawcontinue&'
     extUrlRequestUrl += 'eulimit={eulimit:d}&'
     extUrlRequestUrl += 'euoffset={euoffset:d}'
 

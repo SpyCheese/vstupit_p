@@ -15,11 +15,11 @@ def createPage(config, pages) :
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
 </head>
 <body>
-<table border="1">
+<table border="1" cellpadding="2" cols="3">
     <tr>
-        <td><b>#</b></td>
-        <td><b>Статья</b></td>
-        <td><b>Количество<br>ссылок</b></td>
+        <td bgcolor="ffffaa"><b>#</b></td>
+        <td bgcolor="ffffaa" width="700"><b>Статья</b></td>
+        <td bgcolor="ffffaa"><b>Количество<br>ссылок</b></td>
     </tr>
 """.format(pageTitle = config.pageTitle))
 
