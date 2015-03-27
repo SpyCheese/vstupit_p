@@ -4,6 +4,8 @@
 
 import sys
 
+
+# ========================================================================================
 # createPage - функция, создающая страницу с таблицей статей.
 def createPage(config, pages) :
     print('Создание страницы', config.outputFile, file = sys.stderr)

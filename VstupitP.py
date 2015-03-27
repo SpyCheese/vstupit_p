@@ -7,6 +7,8 @@ import ConfigParser
 import WikiGetter
 import HtmlWriter
 
+
+# ========================================================================================
 # Парсинг файла конфигурации
 configFileName = 'config.ini'
 config = ConfigParser.parse(configFileName)
@@ -16,4 +18,3 @@ pages = WikiGetter.getPagesWithExtLinks(config)
 
 # Создание html-страницы
 HtmlWriter.createPage(config, pages)
-

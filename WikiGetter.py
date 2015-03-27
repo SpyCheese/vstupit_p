@@ -9,11 +9,15 @@ from lxml import etree
 EULIMIT = 500
 LIST_PARSING_OUTPUT_PERIOD = 40
 
+
+# ========================================================================================
 # Page - структура, содежащая  информацию о странице
 class Page :
     name = ''
     extLinksCount = 0
 
+
+# ========================================================================================
 # parseExtUrlResponse - парсинг списка внешних ссылок и добавление в словарь.
 # Возвращает новый euoffset или -1, если это конец
 def parseExtUrlResponse(file, idToCount, idToName) :
@@ -53,6 +57,8 @@ def parseExtUrlResponse(file, idToCount, idToName) :
 
     return newOffset
 
+
+# ========================================================================================
 # createList - создаёт список статей на основе количества ссылок,
 # сортирует по убыванию и оставляет pagesCount элементов
 def createList(idToCount, idToName, pagesCount) :
@@ -70,6 +76,8 @@ def createList(idToCount, idToName, pagesCount) :
         pages = pages[:pagesCount]
     return pages
 
+
+# ========================================================================================
 # getPagesWithExtLinks - функция, возвращающая список страниц
 # с указанием количества внешних ссылок.
 def getPagesWithExtLinks(config) :
