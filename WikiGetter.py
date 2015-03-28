@@ -112,6 +112,7 @@ def getPagesWithExtLinks(config) :
 
             # Парсинг xml и получение данных
             euoffset = parseExtUrlResponse(response, idToCount, idToName)
+            response.close()
             if euoffset == -1 :
                 break
 
