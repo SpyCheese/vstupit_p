@@ -11,7 +11,7 @@ LIST_PARSING_OUTPUT_PERIOD = 40
 
 
 # ========================================================================================
-# Page - структура, содежащая  информацию о странице
+# Page - структура, содежащая информацию о странице
 class Page :
     name = ''
     extLinksCount = 0
@@ -19,7 +19,7 @@ class Page :
 
 # ========================================================================================
 # parseExtUrlResponse - парсинг списка внешних ссылок и добавление в словарь.
-# Возвращает новый euoffset или -1, если это конец
+# Возвращает новый euoffset (или -1, если это конец)
 def parseExtUrlResponse(file, idToCount, idToName) :
     try:
         responseXml = etree.parse(file)
@@ -49,7 +49,7 @@ def parseExtUrlResponse(file, idToCount, idToName) :
         except ValueError :
             print('Ошибка: полученный XML имеет неверный формат', file = sys.stderr)
             exit(1)
-        # Увеличение счётчита ссылок статьи
+        # Увеличение счётчика ссылок статьи
         if pageId not in idToCount :
             idToCount[pageId] = 1
         else :
@@ -71,7 +71,7 @@ def createList(idToCount, idToName, pagesCount) :
         pages.append(page)
     # Сортировка по количеству ссылок
     pages.sort(key = (lambda x : x.extLinksCount), reverse = True)
-    # Удаление лишник статей из списка
+    # Удаление лишних статей из списка
     if len(pages) > pagesCount :
         pages = pages[:pagesCount]
     return pages
@@ -85,7 +85,7 @@ def getPagesWithExtLinks(config) :
 
     # Количество ссылок в статьях
     idToCount = {}
-    # Имена снатей
+    # Имена статей
     idToName = {}
 
     # URL запроса
@@ -110,7 +110,7 @@ def getPagesWithExtLinks(config) :
                 print('Ошибка: не удалось получить доступ к', apiUrl, file = sys.stderr)
                 exit(1)
 
-            # Парсинг xml и получение данных
+            # Парсинг xml
             euoffset = parseExtUrlResponse(response, idToCount, idToName)
             response.close()
             if euoffset == -1 :
