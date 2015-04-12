@@ -4,6 +4,7 @@
 
 import urllib.request
 import sys
+import heapq
 from lxml import etree
 
 EULIMIT = 500
@@ -20,7 +21,7 @@ class Page :
 # ========================================================================================
 # parseExtUrlResponse - парсинг списка внешних ссылок и добавление в словарь.
 # Возвращает новый euoffset (или -1, если это конец)
-def parseExtUrlResponse(file, idToCount, idToName) :
+def parseExtUrlResponse(file, idToPage, pages) :
     try:
         responseXml = etree.parse(file)
     except etree.XMLSyntaxError as error :
@@ -43,38 +44,28 @@ def parseExtUrlResponse(file, idToCount, idToName) :
     for item in xmlExtUrls :
         try :
             pageId = int(item.get('pageid'))
-            # Добавление имени статьи в словарь имён
-            if pageId not in idToName :
-                idToName[pageId] = item.get('title')
         except ValueError :
             print('Ошибка: полученный XML имеет неверный формат', file = sys.stderr)
             exit(1)
-        # Увеличение счётчика ссылок статьи
-        if pageId not in idToCount :
-            idToCount[pageId] = 1
+        if pageId not in idToPage :
+            # Создание объекта Page, если этой статьи ещё не было
+            page = Page()
+            page.name = item.get('title')
+            page.extLinksCount = 1
+            idToPage[pageId] = page
+            pages.append(page)
         else :
-            idToCount[pageId] += 1
+            # Увеличение счётчика ссылок статьи
+            idToPage[pageId].extLinksCount += 1
 
     return newOffset
 
 
 # ========================================================================================
-# createList - создаёт список статей на основе количества ссылок,
-# сортирует по убыванию и оставляет pagesCount элементов
-def createList(idToCount, idToName, pagesCount) :
-    # Создание массива
-    pages = []
-    for i in idToCount :
-        page = Page()
-        page.name = idToName[i]
-        page.extLinksCount = idToCount[i]
-        pages.append(page)
-    # Сортировка по количеству ссылок
-    pages.sort(key = (lambda x : x.extLinksCount), reverse = True)
-    # Удаление лишних статей из списка
-    if len(pages) > pagesCount :
-        pages = pages[:pagesCount]
-    return pages
+# sortList - сортирует список статей по убыванию количества ссылок
+# и оставляет pagesCount наибольших.
+def createList(pages, pagesCount) :
+    return heapq.nlargest(pagesCount, pages, key = (lambda x : x.extLinksCount))
 
 
 # ========================================================================================
@@ -83,10 +74,9 @@ def createList(idToCount, idToName, pagesCount) :
 def getPagesWithExtLinks(config) :
     print('Получение информации с', config.siteUrl, file = sys.stderr)
 
-    # Количество ссылок в статьях
-    idToCount = {}
-    # Имена статей
-    idToName = {}
+    # Страницы
+    idToPage = {}
+    pages = []
 
     # URL запроса
     apiUrl = config.siteUrl + '/w/api.php'
@@ -111,7 +101,7 @@ def getPagesWithExtLinks(config) :
                 exit(1)
 
             # Парсинг xml
-            euoffset = parseExtUrlResponse(response, idToCount, idToName)
+            euoffset = parseExtUrlResponse(response, idToPage, pages)
             response.close()
             if euoffset == -1 :
                 break
@@ -126,6 +116,6 @@ def getPagesWithExtLinks(config) :
 
     # Создание массива и сортировка
     print('Сортировка страниц по убыванию количества ссылок', file = sys.stderr)
-    pages = createList(idToCount, idToName, config.pagesCount)
+    pages = createList(pages, config.pagesCount)
 
     return pages
