@@ -7,15 +7,6 @@ import sys
 
 
 # ========================================================================================
-# Config - структура, возвращаемая из функции parse
-class Config :
-    siteUrl = ''
-    outputFile = ''
-    pageTitle = ''
-    pagesCount = 0
-
-
-# ========================================================================================
 # getParamStr - возвращает значение параметра из файла конфигурации.
 # Завершает программу с ошибкой при его отсутствии.
 def getParamStr(configFile, param) :
@@ -41,15 +32,12 @@ def getParamInt(configFile, param) :
 
 # ========================================================================================
 # parse - открывает файл fileName и считывает из него параметры.
-def parse(fileName) :
+def parse(fileName, config) :
     print('Парсинг файла', fileName, file = sys.stderr)
     configFile = configparser.ConfigParser()
     configFile.read(fileName)
-    c = Config()
 
-    c.siteUrl = getParamStr(configFile, 'siteUrl')
-    c.outputFile = getParamStr(configFile, 'outputFile')
-    c.pageTitle = getParamStr(configFile, 'pageTitle')
-    c.pagesCount = getParamInt(configFile, 'pagesCount')
-
-    return c
+    config.siteUrl = getParamStr(configFile, 'siteUrl')
+    config.outputFile = getParamStr(configFile, 'outputFile')
+    config.pageTitle = getParamStr(configFile, 'pageTitle')
+    config.pagesCount = getParamInt(configFile, 'pagesCount')
