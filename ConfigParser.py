@@ -41,3 +41,6 @@ def parse(fileName, config) :
     config.outputFile = getParamStr(configFile, 'outputFile')
     config.pageTitle = getParamStr(configFile, 'pageTitle')
     config.pagesCount = getParamInt(configFile, 'pagesCount')
+
+    config.startEUOffset = 0
+    config.startIdToPage = {}

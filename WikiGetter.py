@@ -21,7 +21,7 @@ class Page :
 # ========================================================================================
 # parseExtUrlResponse - парсинг списка внешних ссылок и добавление в словарь.
 # Возвращает новый euoffset (или -1, если это конец)
-def parseExtUrlResponse(file, idToPage, pages) :
+def parseExtUrlResponse(file, idToPage) :
     try:
         responseXml = etree.parse(file)
     except etree.XMLSyntaxError as error :
@@ -53,7 +53,6 @@ def parseExtUrlResponse(file, idToPage, pages) :
             page.name = item.get('title')
             page.extLinksCount = 1
             idToPage[pageId] = page
-            pages.append(page)
         else :
             # Увеличение счётчика ссылок статьи
             idToPage[pageId].extLinksCount += 1
@@ -64,8 +63,8 @@ def parseExtUrlResponse(file, idToPage, pages) :
 # ========================================================================================
 # sortList - сортирует список статей по убыванию количества ссылок
 # и оставляет pagesCount наибольших.
-def createList(pages, pagesCount) :
-    return heapq.nlargest(pagesCount, pages, key = (lambda x : x.extLinksCount))
+def createList(idToPage, pagesCount) :
+    return heapq.nlargest(pagesCount, idToPage.values(), key = (lambda x : x.extLinksCount))
 
 
 # ========================================================================================
@@ -75,8 +74,7 @@ def getPagesWithExtLinks(config) :
     print('Получение информации с', config.siteUrl, file = sys.stderr)
 
     # Страницы
-    idToPage = {}
-    pages = []
+    idToPage = config.startIdToPage
 
     # URL запроса
     apiUrl = config.siteUrl + '/w/api.php'
@@ -89,7 +87,7 @@ def getPagesWithExtLinks(config) :
     extUrlRequestUrl += 'eulimit={eulimit:d}&'
     extUrlRequestUrl += 'euoffset={euoffset:d}'
 
-    euoffset = 0
+    euoffset = config.startEUOffset
     outputPeriodLeft = LIST_PARSING_OUTPUT_PERIOD
     try :
         while True :
@@ -101,7 +99,7 @@ def getPagesWithExtLinks(config) :
                 exit(1)
 
             # Парсинг xml
-            euoffset = parseExtUrlResponse(response, idToPage, pages)
+            euoffset = parseExtUrlResponse(response, idToPage)
             response.close()
             if euoffset == -1 :
                 break
@@ -116,6 +114,6 @@ def getPagesWithExtLinks(config) :
 
     # Создание массива и сортировка
     print('Сортировка страниц по убыванию количества ссылок', file = sys.stderr)
-    pages = createList(pages, config.pagesCount)
+    pages = createList(idToPage, config.pagesCount)
 
     return pages
