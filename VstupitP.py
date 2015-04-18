@@ -4,6 +4,7 @@
 # Главный файл программы.
 
 import sys
+import threading
 
 import CommandLineParser
 import ConfigParser
@@ -53,7 +54,22 @@ if config.restart :
     ConfigParser.parse(configFileName, config)
 
 # Получение списка статей с внешними ссылками с помощью MetaWiki API
-pages = WikiGetter.getPagesWithExtLinks(config)
+# Запуск отдельного поток; главный будет отлавливать KeyboardInterrupt
+wikiGetterResult = WikiGetter.Result()
+wikiGetterThread = threading.Thread(target = WikiGetter.getPagesWithExtLinks, args = (config, wikiGetterResult))
+wikiGetterThread.start()
+while True :
+    try :
+        wikiGetterThread.join()
+        break
+    except KeyboardInterrupt :
+        WikiGetter.interrupt()
 
-# Создание html-страницы
-HtmlWriter.createPage(config, pages)
+# Если всё готово или выставлен флаг --no-saving, создать страницу,
+# иначе - записать в файл
+if wikiGetterResult.done or config.noSaving :
+    pages = WikiGetter.createList(wikiGetterResult.idToPage, config.pagesCount)
+    HtmlWriter.createPage(config, pages)
+    SaveLoad.clearData()
+else :
+    SaveLoad.saveData(config, wikiGetterResult.idToPage, wikiGetterResult.euoffset)

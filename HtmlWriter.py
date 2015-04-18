@@ -39,14 +39,8 @@ def createPage(config, pages) :
     print('Создание страницы', config.outputFile, file = sys.stderr)
     try :
         htmlPage = open(config.outputFile, 'w')
-    except PermissionError :
-        print('Ошибка: не удалось создать файл', config.outputFile, '- отказано в доступе', file = sys.stderr)
-        exit(1)
-    except FileNotFoundError :
+    except OSError :
         print('Ошибка: не удалось создать файл', config.outputFile, file = sys.stderr)
-        exit(1)
-    except IsADirectoryError :
-        print('Ошибка: не удалось создать файл', config.outputFile, '- это директория', file = sys.stderr)
         exit(1)
 
     # Создание таблицы
