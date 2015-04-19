@@ -71,6 +71,7 @@ while True :
 if wikiGetterResult.done or config.noSaving :
     pages = WikiGetter.createList(wikiGetterResult.idToPage, config.pagesCount)
     HtmlWriter.createPage(config, pages)
-    SaveLoad.clearData(config)
+    if not config.noSaving :
+        SaveLoad.clearData(config)
 else :
     SaveLoad.saveData(config, wikiGetterResult.idToPage, wikiGetterResult.euoffset)
