@@ -121,7 +121,7 @@ def getPagesWithExtLinks(config, result) :
 
         # Если прервано, выйти из функции
         if interrupted :
-            print("Процесс обработки ссылок прерван пользователем", file = sys.stderr)
+            print("\nПроцесс обработки ссылок прерван пользователем", file = sys.stderr)
             result.idToPage = idToPage
             result.done = False
             result.euoffset = euoffset
