@@ -36,11 +36,11 @@ htmlPageBottom = """
 # createPage - функция, создающая страницу с таблицей статей.
 def createPage(config, pages) :
     # Открытие файла
-    print('Создание страницы', config.outputFile, file = sys.stderr)
+    print("Создание страницы", config.outputFile, file = sys.stderr)
     try :
-        htmlPage = open(config.outputFile, 'w')
+        htmlPage = open(config.outputFile, "w")
     except OSError :
-        print('Ошибка: не удалось создать файл', config.outputFile, file = sys.stderr)
+        print("Ошибка: не удалось создать файл", config.outputFile, file = sys.stderr)
         exit(1)
 
     # Создание таблицы
@@ -55,4 +55,4 @@ def createPage(config, pages) :
 
     # Конец
     htmlPage.close()
-    print('Страница успешно создана', file = sys.stderr)
+    print("Страница успешно создана", file = sys.stderr)

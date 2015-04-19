@@ -14,7 +14,7 @@ LIST_PARSING_OUTPUT_PERIOD = 40
 # ========================================================================================
 # Page - структура, содежащая информацию о странице
 class Page :
-    name = ''
+    name = ""
     extLinksCount = 0
 
 
@@ -25,20 +25,20 @@ def parseExtUrlResponse(file, idToPage) :
     responseXml = etree.parse(file)
 
     # Получение нового значения euoffset
-    xmlQueryContinue = responseXml.xpath('/api/query-continue/exturlusage')
+    xmlQueryContinue = responseXml.xpath("/api/query-continue/exturlusage")
     if len(xmlQueryContinue) == 0 :
         newOffset = -1
     else :
-        newOffset = int(xmlQueryContinue[0].get('euoffset'))
+        newOffset = int(xmlQueryContinue[0].get("euoffset"))
 
     # Просмотр списка внешних ссылок
-    xmlExtUrls = responseXml.xpath('/api/query/exturlusage/eu')
+    xmlExtUrls = responseXml.xpath("/api/query/exturlusage/eu")
     for item in xmlExtUrls :
-        pageId = int(item.get('pageid'))
+        pageId = int(item.get("pageid"))
         if pageId not in idToPage :
             # Создание объекта Page, если этой статьи ещё не было
             page = Page()
-            page.name = item.get('title')
+            page.name = item.get("title")
             page.extLinksCount = 1
             idToPage[pageId] = page
         else :
@@ -74,21 +74,21 @@ class Result :
 # getPagesWithExtLinks - функция, записывающая в result список страниц
 # с указанием количества внешних ссылок.
 def getPagesWithExtLinks(config, result) :
-    print('Получение информации с', config.siteUrl, file = sys.stderr)
+    print("Получение информации с", config.siteUrl, file = sys.stderr)
 
     # Страницы
     idToPage = config.startIdToPage
 
     # URL запроса
-    apiUrl = config.siteUrl + '/w/api.php'
-    extUrlRequestUrl = apiUrl + '?'
-    extUrlRequestUrl += 'action=query&'
-    extUrlRequestUrl += 'list=exturlusage&'
-    extUrlRequestUrl += 'format=xml&'
-    extUrlRequestUrl += 'eunamespace=0&'
-    extUrlRequestUrl += 'rawcontinue&'
-    extUrlRequestUrl += 'eulimit={eulimit:d}&'
-    extUrlRequestUrl += 'euoffset={euoffset:d}'
+    apiUrl = config.siteUrl + "/w/api.php"
+    extUrlRequestUrl = apiUrl + "?"
+    extUrlRequestUrl += "action=query&"
+    extUrlRequestUrl += "list=exturlusage&"
+    extUrlRequestUrl += "format=xml&"
+    extUrlRequestUrl += "eunamespace=0&"
+    extUrlRequestUrl += "rawcontinue&"
+    extUrlRequestUrl += "eulimit={eulimit:d}&"
+    extUrlRequestUrl += "euoffset={euoffset:d}"
 
     euoffset = config.startEUOffset
     outputPeriodLeft = LIST_PARSING_OUTPUT_PERIOD
@@ -101,7 +101,7 @@ def getPagesWithExtLinks(config, result) :
         try :
             response = urllib.request.urlopen(extUrlRequestUrl.format(eulimit = EULIMIT, euoffset = euoffset))
         except (urllib.error.URLError, ValueError) :
-            print('Ошибка: не удалось получить доступ к', apiUrl, file = sys.stderr)
+            print("Ошибка: не удалось получить доступ к", apiUrl, file = sys.stderr)
             result.euoffset = euoffset
             result.idToPage = idToPage
             result.done = False
@@ -117,7 +117,7 @@ def getPagesWithExtLinks(config, result) :
         outputPeriodLeft -= 1
         if outputPeriodLeft == 0 :
             outputPeriodLeft = LIST_PARSING_OUTPUT_PERIOD
-            print('Обработано', euoffset, 'ссылок...', file = sys.stderr)
+            print("Обработано", euoffset, "ссылок...", file = sys.stderr)
 
         # Если прервано, выйти из функции
         if interrupted :

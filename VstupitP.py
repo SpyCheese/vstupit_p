@@ -24,9 +24,9 @@ class Config :
     configFile = "config.ini"
 
     # Параметры из файла конфигурации
-    siteUrl = ''
-    outputFile = ''
-    pageTitle = ''
+    siteUrl = ""
+    outputFile = ""
+    pageTitle = ""
     pagesCount = 0
 
     # Данные, сохранённые ранее в файл

@@ -21,7 +21,7 @@ def loadData(config) :
 
     # Получение основных параметров из файла
     try :
-        xmlConfig = xml.xpath('/root/config')[0]
+        xmlConfig = xml.xpath("/root/config")[0]
     except IndexError :
         print("Файл", config.savedDataFile, "не существует или повреждён", file = sys.stderr)
         return False
@@ -83,9 +83,9 @@ def saveData(config, idToPage, euoffset) :
 
    # Запись в файл
     try :
-        file = open(config.savedDataFile, 'wb')
+        file = open(config.savedDataFile, "wb")
     except OSError :
-        print('Ошибка: не удалось создать файл', config.savedDataFile, file = sys.stderr)
+        print("Ошибка: не удалось создать файл", config.savedDataFile, file = sys.stderr)
         exit(1)
     file.write(etree.tostring(xmlRoot))
     file.close()
