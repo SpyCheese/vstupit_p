@@ -7,14 +7,28 @@ import sys
 # ========================================================================================
 # parse - парсит аргументы командной строки и записывает их в структуру config.
 def parse(config) :
-    for param in sys.argv[1:] :
+    i = 1
+    while i < len(sys.argv) :
+        param = sys.argv[i]
         if len(param) >= 2 and param[0:2] == "--" :
-            if param == "--help" :        # Показать справку
+            if param == "--help" :         # Показать справку
                 config.showHelp = True
-            elif param == "--restart" :   # Начать делать запросы заново, не с сохранённого места
+            elif param == "--restart" :    # Начать делать запросы заново, не с сохранённого места
                 config.restart = True
-            elif param == "--no-saving" : # При прерывании обработки списка прекратить работу, а не сохранять её
+            elif param == "--no-saving" :  # При прерывании обработки списка прекратить работу, а не сохранять её
                 config.noSaving = True
+            elif param == "--saved-data" : # Имя файла для сохранённых данных
+                if i == len(sys.argv) - 1 :
+                    print("Ошибка: не указано имя файла для сохранённых данных")
+                    exit(1)
+                i += 1
+                config.savedDataFile = sys.argv[i]
+            elif param == "--config" : # Имя файла конфигурации
+                if i == len(sys.argv) - 1 :
+                    print("Ошибка: не указано имя файла конфигурации")
+                    exit(1)
+                i += 1
+                config.configFile = sys.argv[i]
             else :
                 print("Ошибка: неизвестный параметр", param, file = sys.stderr)
                 exit(1)
@@ -32,6 +46,5 @@ def parse(config) :
         else :
             print("Ошибка: неизвестный параметр", param, file = sys.stderr)
             exit(1)
-
-
+        i += 1
 

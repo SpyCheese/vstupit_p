@@ -20,8 +20,10 @@ class Config :
     showHelp = False
     restart = False
     noSaving = False
+    savedDataFile = "savedData.xml"
+    configFile = "config.ini"
 
-    # Параметры из файла config.ini
+    # Параметры из файла конфигурации
     siteUrl = ''
     outputFile = ''
     pageTitle = ''
@@ -50,8 +52,7 @@ if not config.restart :
 
 # Парсинг файла конфигурации, если нужно начинать процесс с начала
 if config.restart :
-    configFileName = 'config.ini'
-    ConfigParser.parse(configFileName, config)
+    ConfigParser.parse(config)
 
 # Получение списка статей с внешними ссылками с помощью MetaWiki API
 # Запуск отдельного поток; главный будет отлавливать KeyboardInterrupt
@@ -70,6 +71,6 @@ while True :
 if wikiGetterResult.done or config.noSaving :
     pages = WikiGetter.createList(wikiGetterResult.idToPage, config.pagesCount)
     HtmlWriter.createPage(config, pages)
-    SaveLoad.clearData()
+    SaveLoad.clearData(config)
 else :
     SaveLoad.saveData(config, wikiGetterResult.idToPage, wikiGetterResult.euoffset)

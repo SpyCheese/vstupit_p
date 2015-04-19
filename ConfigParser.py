@@ -32,10 +32,10 @@ def getParamInt(configFile, param) :
 
 # ========================================================================================
 # parse - открывает файл fileName и считывает из него параметры.
-def parse(fileName, config) :
-    print('Парсинг файла', fileName, file = sys.stderr)
+def parse(config) :
+    print('Парсинг файла', config.configFile, file = sys.stderr)
     configFile = configparser.ConfigParser()
-    configFile.read(fileName)
+    configFile.read(config.configFile)
 
     config.siteUrl = getParamStr(configFile, 'siteUrl')
     config.outputFile = getParamStr(configFile, 'outputFile')
