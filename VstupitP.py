@@ -55,7 +55,7 @@ if config.restart :
     ConfigParser.parse(config)
 
 # Получение списка статей с внешними ссылками с помощью MetaWiki API
-# Запуск отдельного поток; главный будет отлавливать KeyboardInterrupt
+# Запуск отдельного потока; главный будет отлавливать KeyboardInterrupt
 wikiGetterResult = WikiGetter.Result()
 wikiGetterThread = threading.Thread(target = WikiGetter.getPagesWithExtLinks, args = (config, wikiGetterResult))
 wikiGetterThread.start()

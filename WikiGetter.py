@@ -49,8 +49,8 @@ def parseExtUrlResponse(file, idToPage) :
 
 
 # ========================================================================================
-# sortList - сортирует список статей по убыванию количества ссылок
-# и оставляет pagesCount наибольших.
+# createList - создаёт список из pagesCount статей
+# с наибольшим количеством внешних ссылок.
 def createList(idToPage, pagesCount) :
     return heapq.nlargest(pagesCount, idToPage.values(), key = (lambda x : x.extLinksCount))
 
@@ -97,6 +97,14 @@ def getPagesWithExtLinks(config, result) :
         print("Процесс продолжается, уже обработано", euoffset, "ссылок", file = sys.stderr)
 
     while True :
+        # Если прервано, выйти из функции
+        if interrupted :
+            print("\nПроцесс обработки ссылок прерван пользователем", file = sys.stderr)
+            result.idToPage = idToPage
+            result.done = False
+            result.euoffset = euoffset
+            return
+
         # Запрос к MediaWiki API на получение данных
         try :
             response = urllib.request.urlopen(extUrlRequestUrl.format(eulimit = EULIMIT, euoffset = euoffset))
@@ -118,14 +126,6 @@ def getPagesWithExtLinks(config, result) :
         if outputPeriodLeft == 0 :
             outputPeriodLeft = LIST_PARSING_OUTPUT_PERIOD
             print("Обработано", euoffset, "ссылок...", file = sys.stderr)
-
-        # Если прервано, выйти из функции
-        if interrupted :
-            print("\nПроцесс обработки ссылок прерван пользователем", file = sys.stderr)
-            result.idToPage = idToPage
-            result.done = False
-            result.euoffset = euoffset
-            return
 
     result.idToPage = idToPage
     result.done = True
